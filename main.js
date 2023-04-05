@@ -366,28 +366,23 @@
 
 // dec2Bin(10);
 // =========================================================================
-const obj_1 = {
-  username: "chamdev.com",
-  info: {
-    age: 12,
-    hieght: 167
-  },
-  getUserName: function(){
-    return this.info.age
-  }};
-  // info: {
-  // address: "https://chamdev.com"
-  // },
-  // getUsername() {
-  // return this.username;
-  // }
-  // };
-  
-  const obj_2 = JSON.parse(JSON.stringify(obj_1));
-  const obj_3 = {...obj_1}
-  
-  obj_1.age = 10;
-  obj_1.info.age = 20;
-  
-  // console.log(obj_3);
-  console.log(obj_2) // {username: "chamdev.com", info: {address: "https://chamdev.com"}}
+let btn = document.querySelector('#button')
+let header = document.querySelector('header')
+// document.body.addEventListener('click',function(event) {
+//     console.log('The body was clicked!');
+//     // event.stopPropagation();
+
+// });
+header.addEventListener('click',(event)=>{
+    console.log('The header was clicked!')
+    console.log(event.eventPhase)
+    event.stopPropagation()
+},false)
+btn.addEventListener('click', function(event) {
+    console.log('The button was clicked!');
+    console.log(event.bubbles)
+    event.preventDefault()
+    // event.stopPropagation()
+});
+
+

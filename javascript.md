@@ -795,4 +795,285 @@ console.log("obj_2", obj_2); // {username: "chamdev.com", info: {address: "https
 * Spread và Object.assign không thể deepclone, nhưng có thể clone được method
 * JSON method thì có thể deep clone nhưng lại không thể clone method được.
 
+# 6. XMLHttpRequest
+*là object giúp cho quá trình trao đổi giữa web và server thông qua các request và response*
+```
 
+```
+# 7. DOM - Document Object Model
+*Mô hình đối tượng tài liệu W3C (DOM) là một nền tảng và giao diện ngôn ngữ trung lập cho phép các chương trình và tập lệnh truy cập động và cập nhật nội dung, cấu trúc và kiểu của tài liệu.*
+
+
+## 7.1: Có 5 cách để lấy ra các element trong HTML
+* by Id
+* by tagName
+* by className
+* by CSS Selector
+* by HTML Object Collection
+## 7.2 Phân biệt Live HTML Collection và Static NodeList
+* Static NodeList: Không thể thay đổi thậm chí người dùng có tạo hành động
+* Live HTMLCollection: nếu có sự thay đổi trong DOM thì nó sẽ update và phản ánh những hành động từ người dùng*
+```
+// Static NodeList
+let btnsStatic = main.querySelectorAll('button');
+
+// After 3 seconds, add a new button
+setTimeout(function () {
+
+	// Inject a new button
+	let btn = document.createElement('button');
+	btn.textContent = '4';
+	main.append(btn);
+
+	// logs the first three buttons, but not the new one
+	console.log(btnsStatic);
+
+}, 3000);
+
+///Log: Mặc dù đã thêm button nhưng không được cập nhật
+//NodeList(3) [button, button, button]
+```
+
+```
+// Live NodeList
+let btnsLive = main.getElementsByTagName('button');
+
+// After 3 seconds, add a new button
+setTimeout(function () {
+
+	// Inject a new button
+	let btn = document.createElement('button');
+	btn.textContent = '4';
+	main.append(btn);
+
+	// logs all four buttons, including the new one
+	console.log(btnsLive);
+
+}, 3000);
+///Log: Có thêm button 
+///HTMLCollection(4)
+```
+
+## 7.3 Selecting Element
+|         **Method**        |                       **Return**                      | **_Method of _**            |
+|:-------------------------:|:-----------------------------------------------------:|-----------------------------|
+| getElementById()          |                        Element                        |                             |
+| getElementsByName()       |    Live NodeList - like Array but not array object    | Document Object             |
+| getElelmentsByTagName()   | Live HTMLCollection - like Array but not array object | Document and Element Object |
+| getElementsByClassName()  |                 Static HTMLCollection                 | Document and ELement        |
+| querySelector()           |                 First ELement matched                 | Document and Element        |
+| querySelectorAll()        |                    Static NodeList                    |                             |
+| Convert NodeList to Array |                  Array.from(nodeList)                 | Trick                       |
+
+## 7.4 Traversing elements
+|                 **Property**                 |         **Return**        | **Desc**                                       |
+|:--------------------------------------------:|:-------------------------:|------------------------------------------------|
+| node.parentNode                              |         Node/NULL         | Khoảng trắng trong HMTL được tính là textNode  |
+| node.firstChild/node.lastChild               |  first or last child node | bao gồm cả textNode, commentNode, elementNode. |
+| node.firstElementChild/node.lastElementChild | first or last elementNode |                                                |
+| node.childNodes                              |       Live NodeList       |                                                |
+
+## 7.5 Manipulating elements()
+|                **Property/Method**                |                                                                                                                                      **Desc**                                                                                                                                     |                                                                                                                                          **Note**                                                                                                                                          |
+|:-------------------------------------------------:|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+| document.createElement()                          | tạo mới element trong document                                                                                                                                                                                                                                                    |                                                                                                                                                                                                                                                                                            |
+| element.appendChild()                             | để thêm node và cuối element chỉ định hoặc để di chuyển vị trí của node                                                                                                                                                                                                           | Return element đang chỉ định                                                                                                                                                                                                                                                               |
+| node.textContent                                  | trả về string được nối từ tất cả các nodeChild giữ nguyên cả xuống dòng, ngoại trừ comment                                                                                                                                                                                        | GET and SET                                                                                                                                                                                                                                                                                |
+| node.innerText                                    | tương tự như textContent nhưng loại bỏ xuống dòng                                                                                                                                                                                                                                 | mất thời gian để tính toán                                                                                                                                                                                                                                                                 |
+| element.innerHTML                                 | set/get tất cả những gì ở trong element, bao gồm cả whitespace, endline, comment,...                                                                                                                                                                                              | GET and SET, nó hoạt động khi reload page                                                                                                                                                                                                                                                  |
+|                                                   | So sánh innerHTML và document.creatElement(): đều cho ra kết quả như nhau nhưng - creatELement() cho hiệu năng tốt hơn innerHTML vì khi sử dụng thì web cần so sánh và   và tạo mới element - innerHTML được khuyên dùng khi render dữ liệu từ nguồn đáng tin cậy như là database |                                                                                                                                                                                                                                                                                            |
+| element.after(par1,par2,...)                      | chèn 1 hay nhiều node vào sau element                                                                                                                                                                                                                                             |                                                                                                                                                                                                                                                                                            |
+| node.append(...nodes) node.append(...DOMString)   | chèn thêm 1 hay nhiều node vào trong node được chỉ định                                                                                                                                                                                                                           | Return undefined                                                                                                                                                                                                                                                                           |
+| node.prepend(...nodes) node.prepend(...DOMString) | tương tự như node.append(...nodes) nhưng là chèn thêm vào đầu                                                                                                                                                                                                                     | let app = document.querySelector('#app');  let langs = ['CSS','JavaScript','TypeScript'];  let nodes = langs.map(lang => {     let li = document.createElement('li');     li.textContent = lang;     return li; });  app.prepend(...nodes);                                                |
+| element.insertAdjacentHTML(positionName, text);   | ![Alt text](https://www.javascripttutorial.net/wp-content/uploads/2020/05/JavaScript-insertAdjacentHTML.png "a title")                                                                                                                                                            | Trong đó tham số text bắt buộc phải là string                                                                                                                                                                                                                                              |
+| node.replaceChild(newChild, oldChild);            | thay thế node newChild và oldChild là các **element**                                                                                                                                                                                                                             |                                                                                                                                                                                                                                                                                            |
+| originalNode.cloneNode(deep)                      | trả về 1 node được clone từ node nguyên bản - Nếu deep == true, cả originalNode và các node con của nó đều được clone - Nếu deep == false, chỉ duy nhất originalNode được clone                                                                                                   | - Nếu originalNode có thuộc tính id thì clone cũng copy luôn cả id, do đó cần phải thay đổi id của cloneNode - cloneNode chỉ copy được các attribute và listener inline của originalNode, với các sự kiện được thêm vào các  listener thông qua addEventListener() thì sẽ không được clone |
+| node.removeChild(childNode)                       | Xóa bỏ nodeChild được chỉ định                                                                                                                                                                                                                                                    |                                                                                                                                                                                                                                                                                            |
+| nodeParent.insertBefore(newNode,existingNode)     | Thêm node vào trước node hiện có-existingNode. Trong đó existingNode là 1 node con của nodeParent                                                                                                                                                                                 |                                                                                                                                                                                                                                                                                            |
+## 7.6 DocumentFragment
+là một phiên bản nhẹ của document, nó cho phép lưu trữ những cấu trúc document như là document tiêu chuẩn, tuy nhiên lại không là một phần của DOM tree
+  Khi có sự thay đổi từ document fragment thì nó ảnh hưởng tới document
+  Nó thích hợp khi sủ dụng với appendChild() or insertBefore() method
+**Các cách để khởi tạo document fragment: **
+* let fragment = new DocumentFragment();
+* let fragment = document.createDocumentFragment();
+  
+**Ứng dụng khi dùng document fragment trong việc render page:** so sánh 2 cách sau
+```
+//Cách 1:
+let div = document.querySelector('.container');
+
+for (let i = 0; i < 1000; i++) {
+   let p = document.createElement('p');
+   p.textContent = `Paragraph ${i}`;
+   div.appendChild(p);
+}
+```
+```
+//Cách 2:
+
+let div = document.querySelector('.container');
+
+// compose DOM nodes
+let fragment = document.createDocumentFragment();
+for (let i = 0; i < 1000; i++) {
+   let p = document.createElement('p');
+   p.textContent = `Paragraph ${i}`;
+   fragment.appendChild(p);
+}
+
+// append the fragment to the DOM tree
+div.appendChild(fragment);
+
+```
+=> Kết quả của 2 cách là như nhau nhưng cách 2 hoạt động có hiệu quả hơn. Bởi vì theo cách 1, sau mỗi lần lặp đều phải tính toán để thêm phần tử vào div.container
+
+## 7.6 DOM ATTRIBUTE
+* Khi trang web load 1 HTML page thì trình duyệt sẽ tự động chuyển đổi attribute của phần tử trong HTML thành property của DOM Object.
+
+* Attribute có giá trị luôn là string, nhưng khi được chuyển đổi sang thành property của DOM Object thì nó có thể có giá trị kiểu string, number, boolean,...
+
+* **Phân biệt standard attribute và non-standard attribute:**
+  *standard attribute là nhưng thuộc tính đã đc thêm inline trong html các thuộc tính khác được set thêm vào bằng các phương pháp khác thì được coi là non-standard*
+
+```
+<input type="text" id="username" tabindex="1">
+//Khi này thì **type, id, tabindex** là các stadard. Các thuộc tính khác thêm sau vào là non-standard
+```
+* **Bất đồng bộ trong cú pháp với Attribute**: Khi thay đổi giá trị của các standard attribute thì các property tương ứng của chúng cũng thay đổi và ngược lại. Nhưng với non-standard thì khi thay đổi giá trị của property DOM object thì giá trị của attribute tương ứng sẽ không được thay đổi.
+
+
+```
+let input = document.querySelector('#username');
+
+// attribute -> property: OK
+input.setAttribute('value','guest');
+console.log(input.value);  // guest
+
+
+// property -> attribute: doesn't change
+input.value = 'admin';
+console.log(input.getAttribute('value')); // guest
+```
+```
+let input = document.querySelector('#username');
+
+// attribute -> property
+input.setAttribute('tabindex', 2);
+console.log(input.tabIndex);  // 2
+
+
+// property -> attribute
+input.tabIndex = 3;
+console.log(input.getAttribute('tabIndex')); // 3
+```
+
+### 7.6.1 **Dataset**
+*Muốn custom 1 attribute element, chúng ta có thể dùng cú pháp data-*
+Ví dụ: data-id, data-nameUser,...
+
+```
+<div id="main" data-progress="pending" data-value="10%"></div>
+let bar = document.querySelector('#main');
+console.log(bar.dataset);
+///// LOG:
+[object DOMStringMap] {
+    progress: "pending",
+    value: "10%"
+}
+```
+
+### 7.6.2 **setAttribute() method**
+**Syntax**: *element.setAttribute(name, value);*
+**Return:** *undefined*
+* Nếu giá trị của attribute nào kiểu Boolean, thì tất cả các giá trị khác false đều được tự động gán cho giá trị là true.
+* Không thể set giá trị false có các thuộc tính Boolean, bắt buộc phải removeAttribute()
+```
+```
+### 7.6.3 **getAttribute() method**
+**Syntax:** *let value = element.getAttribute(name);*
+**Return:** giá trị của attribute tìm được hoặc là NULL nếu không tìm được
+
+### 7.6.4 **removeAttribute() method**
+
+### 7.6.5 **hasAttribute() method**
+*Trả về giá trị Boolean*
+
+## 7.7 DOM Element Styles
+  ***element.style*** cho phép thiết lập CSS inline cho HTML Element
+```
+element.style.color = 'blue';
+```
+Việc này tương đương với việc sử dụng element.setAttribute()
+Nếu muốn thay đổi nhiều giá trị thuộc tính thì có thể dùng thuộc tính cssText
+```
+let string = 'color:red;background-color:yellow';
+element.style.cssText = string;
+```
+### 7.7.1 getComputedStyle()
+Sử dụng phương thức này trong trường hợp pseudo-elements
+```
+<html>
+<head>
+    <title>JavaScript getComputedStyle() Demo</title>
+    <style>
+        body {
+            font: arial, sans-serif;
+            font-size: 1em;
+            line-height: 1.6;
+        }
+
+        p::first-letter {
+            font-size: 1.5em;
+            font-weight: normal
+        }
+    </style>
+</head>
+<body>
+    <p id='main'>JavaScript getComputedStyle() Demo for pseudo-elements</p>
+    <script>
+        let p = document.getElementById('main');
+        let style = getComputedStyle(p, '::first-letter');
+        console.log(style.fontSize);
+    </script>
+</body>
+</html>
+```
+```
+24px
+
+```
+
+### 7.7.2  className()
+*trả về chuỗi các class được phân tách bởi khoảng trắng*
+```
+<div id="note" class="info yellow-bg red-text">JS className</div>
+let note = document.querySelector('#note');
+console.log(note.className); 
+```
+
+```
+LOG:
+info yellow-bg red-text
+````
+### 7.7.3  className()
+using element.offsetHeight and element.offsetWidth properties.
+
+## 7.7 DOM WORKING WITH EVENT
+Khi 1 event được thực hiện thì nó trải qua 2 quá trình như sau: 
+* Event capturing(chụp/bắt sự kiện): sự kiện sẽ được bắt đầu từ phần tử xa nhất từ phần tử chỉ định(có thể được hiểu bắt đầu từ html thậm chí là từ window) sau đó bắt dần sự kiện đến phần tử chỉ định.
+* Event Budding(nổi bọt): nó ngược lại với Event Capturing.
+
+Khi bắt sự kiện bằng phương thức addEventListener('') mà chỉ truyền vào 2 đối số thì sự kiện chỉ được bắt trong giai đoạn 2 và 3 (giai đoạn 2 là việc bắt chính phần tử được chỉ định, giai đoạn 3 là giai đoạn nổi bọt)
+Nếu muốn bắt sự kiện trong giai đoạn capturing thì cần thêm đối số thứ 3 có giá trị là true
+```
+elem.addEventListener(..., {capture: true})
+// or, just "true" is an alias to {capture: true}
+elem.addEventListener(..., true)
+```
+DOM EVENT FLOW 2 LEVEL:
+![Alt text](https://www.javascripttutorial.net/wp-content/uploads/2020/02/JavaScript-DOM-Level-2-Event.png "DOM EVENT FLOW 2 LEVEL")
+
+***EVENT OBJECT***
+* Khi event được diễn ra thì trình duyệt sẽ khởi tạo 1 Event Object để xử lý sự kiện. 
+* Event object này chỉ truy cập trong handle event, khi thực thhi xong các tiến trình xử lý thi nó sẽ tự động được xóa đi.
