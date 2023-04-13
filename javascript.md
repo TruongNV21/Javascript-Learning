@@ -1053,9 +1053,9 @@ console.log(note.className);
 ```
 
 ```
-LOG:
+///LOG:
 info yellow-bg red-text
-````
+```
 ### 7.7.3  className()
 using element.offsetHeight and element.offsetWidth properties.
 
@@ -1077,3 +1077,271 @@ DOM EVENT FLOW 2 LEVEL:
 ***EVENT OBJECT***
 * Khi event được diễn ra thì trình duyệt sẽ khởi tạo 1 Event Object để xử lý sự kiện. 
 * Event object này chỉ truy cập trong handle event, khi thực thhi xong các tiến trình xử lý thi nó sẽ tự động được xóa đi.
+
+## 7.8 HANLDING EVENT
+Có 3 cách để xử lý sự kiện trong JS:
+* **Bằng cách thêm vào thuộc tính của element HMTL**
+```
+  <input type="button" value="Save" onclick="alert('Clicked!')">
+```
+  Cách này được xem là tồi vì nó gây khó khăn trong quá trình bảo trì code, nếu là element được load ra trước script thì có thể gây ra những hành động lỗi.
+* **DOM event handlers level 0**
+```let btn = document.querySelector('#btn');
+
+btn.onclick = function() {
+    alert('Clicked!');
+};
+```
+Để xóa event handler thì set giá trị cho event = null
+btn.onclick = null
+* **DOM event handlers level 2**
+  Use: addEventListener() và removeEventListener()
+```
+addEventListener(event,handler,{capture: true/false})
+```
+*Ưu điểm của phương pháp này là quản lý dễ dàng và có thể thêm nhiều sự kiện cho phần tử.*
+
+## 7.8 LOAD EVENT
+| EVENT            | DESC                                                                                                             | Note                                                                                                                                    |
+|------------------|------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------|
+| DOMContentLoaded | được kích hoạt khi DOM content được tải xong, không cần đợi hình ảnh và biểu mẫu tải xong                        | Khi để thẻ script trong phần head sẽ gây tắc nghẽn và trì hoãn việc rendering                                                           |
+| load             | kích hoạt kĩ toàn bộ trang web được tải, bao gồm cả các tài nguyên hình ảnh, biểu mẫu,CSS,...                    | Dùng được cho cả thẻ img và thẻ script                                                                                                  |
+| beforeunload     | kích hoạt trước khi webpage và resource của nó unload, lúc đấy page vẫn được nhìn thấy và vẫn có thể hủy sự kiện | Thường dùng trong trường hợp kiểm tra người dùng có muốn rời khỏi trang web hay không Khi này nó được dùng kết hợp với preventDefault() |
+| unload           | kích hoạt khi hoàn thành quá trình unload page, có nghĩa là không thể nhìn hay thao tác với page nữa             | Không có ứng dụng gì cả!!!                                                                                                              |
+
+
+## 7.9 MOUSE EVENT
+| EVENT           | DESC                                                                                                              | Note                                                                                                                                         |
+|-----------------|-------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------|
+| mouseover       | kích hoạt khi di chuyển chuột từ ngoài vào trong ranh giới của phần tử                                            |                                                                                                                                              |
+| mouseout        | kích hoạt khi di chuyển chuột từ trong ra ngoài phần tử                                                           |                                                                                                                                              |
+| mouseenter      | như mouseover                                                                                                     | không bị nổi bọt và không được kích hoạt khi di chuyển lên phần tử con                                                                       |
+| mouseleave      | như mouseout                                                                                                      | không bị nổi bọt và không được kích hoạt khi di chuyển lên phần tử con                                                                       |
+|                 | **Event object cung cấp thuộc tính button cho phép trả về giá trị từ  0 đến 4 để biểu thị cho vị trí nhấp chuột** |                                                                                                                                              |
+| 0               | chuột trái                                                                                                        | btn.addEventListener("mouseup",(e)=>{ e.preventDefault() console.log(e.button) )  Log: 0 hoặc 1 hoặc...4 tùy thuộc vào vị trị bấm trên chuột |
+| 1               | scroll wheel                                                                                                      |                                                                                                                                              |
+| 2               | chuột phải                                                                                                        |                                                                                                                                              |
+| 3               | backward                                                                                                          |                                                                                                                                              |
+| 4               | forward                                                                                                           |                                                                                                                                              |
+|                 | **Lấy tọa độ của mouse**                                                                                          |                                                                                                                                              |
+| screenX/screenY | trả về tọa độ hiện tại của mouse so với màn hình                                                                  |                                                                                                                                              |
+| clientX/clientY | trả về tọa độ hiện tại của mouse so với phần tử chỉ định                                                          |                                                                                                                                              |
+
+
+## 7.9 KEYBOARD EVENT
+|            | Keyboard Event                    |                                   |
+|------------|-----------------------------------|-----------------------------------|
+| keyup      |                                   |                                   |
+| keydown    |                                   |                                   |
+| keypress   |                                   |                                   |
+|            | **Keyboard Event Property**       | Ví dụ khi ấn phím Z trên bàn phím |
+| event.key  | trả về giá trị của key chỉ định   | return: z                         |
+| event.code | trả về code của keyboard chỉ định | return: KeyZ                      |
+
+
+## 7.9 SCROLL EVENT
+*được kích hoạt trong các trường hợp sau:*
+* sử dụng scrollbar
+* sử dụng mouse whell
+* ấn vào ID link
+* Calling functions in JS
+
+
+**Window object** có 2 thuộc tính là **onscrollX** và **onscrollY** trả về giá trị pixel thay đổi so với tọa độ gốc của window.
+
+Vì event scroll thường gặp nhiều vấn đề về mặt hiệu ứng do delay nên giải pháp ở đâu chính là sử dụng timer
+
+<span style ="color: red">Không bao giờ được sử dụng đoạn code như này:</span>
+```
+window.scroll = () => {
+    // place the scroll handling logic here
+};
+
+```
+***Thay vào đó ta làm như sau:***
+```
+let scrolling = false;
+
+window.scroll = () => {
+    scrolling = true;
+};
+
+setInterval(() => {
+    if (scrolling) {
+        scrolling = false;
+        // place the scroll handling logic here
+    }
+},300);
+```
+Để có thể kiểm soát hành vi scroll tốt hơn thì cũng có thể sử dụng passive event như sau:
+  ***addEventListener(event, handler, {passive: true})***
+
+## 7.9 scrollIntoView()
+là method để di chuyển tức thời màn hành tới vị trí của phần tử chỉ định.
+```
+element.scrollIntoView(alignToTop);
+// Or
+element.scrollIntoView(options);
+Trong đó options là object 
+{
+  behavior: auto*/smooth,
+  block: start*/center/end/nearest, //theo chiều dọc màn hình
+  inline: start/center/end/nearest* // theo chiều ngang màn hình
+}
+```
+## 7.10 Focus Event
+* Focus
+* Blur
+* Focusin(có tính bubble)
+* Focusout(có tính bubble)
+
+Ví dụ đoạn code sau thể hiện tính thừa hưởng bubble:
+```
+<form id="form">
+  <label>
+    Some text:
+    <input type="text" placeholder="text input" />
+  </label>
+  <label>
+    Password:
+    <input type="password" placeholder="password" />
+  </label>
+</form>
+```
+```
+const form = document.getElementById("form");
+
+form.addEventListener("focusin", (event) => {
+  event.target.style.background = "pink";
+});
+
+form.addEventListener("focusout", (event) => {
+  event.target.style.background = "";
+});
+
+```
+## 7.11 Event Delegation- (đại diện) - sử dụng event.target property
+**là việc sử dụng event.target để cleancode, tạo ra ít event listener hơn những logic tương tự.**
+Xem ví dụ để hiểu hơn:
+***Code thường***
+```
+let home = document.querySelector('#home');
+home.addEventListener('home',(event) => {
+    console.log('Home menu item was clicked');
+});
+
+let dashboard = document.querySelector('#dashboard');
+dashboard.addEventListener('dashboard',(event) => {
+    console.log('Dashboard menu item was clicked');
+});
+
+let report = document.querySelector('#report');
+report.addEventListener('report',(event) => {
+    console.log('Report menu item was clicked');
+});
+
+```
+
+***Event Delegation***
+```
+let menu = document.querySelector('#menu');
+
+menu.addEventListener('click', (event) => {
+    let target = event.target;
+
+    switch(target.id) {
+        case 'home':
+            console.log('Home menu item was clicked');
+            break;
+        case 'dashboard':
+            console.log('Dashboard menu item was clicked');
+            break;
+        case 'report':
+            console.log('Report menu item was clicked');
+            break;
+    }
+});
+```
+***event.target***
+trả về element nơi mà sự kiện xảy ra
+Khác với event.currentTarget là trả về chính element được add event
+
+## 7.11 Event dispatchEvent() method
+là phương thức để gửi đi tín hiệu khởi tạo 1 sự kiện, có đánh dấu cho thời kiểm sự kiện được kích hoạt.
+**Event constructor**
+```
+let event = new Event(type, [,options]);
+```
+* type là 1 string tên đại diện cho sự kiện: như là 'click', 'focus',...
+* options: gồm 2 thuộc tính
+bubbles: true/false
+cancelable: true/false
+
+
+**Custom Event**
+```
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Custom Event</title>
+</head>
+<body>
+    <div class="note">JS Custom Event</div>
+    <script>
+        function highlight(elem) {
+            const bgColor = 'yellow';
+            elem.style.backgroundColor = bgColor;
+
+            // create the event
+            let event = new CustomEvent('highlight', {
+                detail: {
+                    backgroundColor: bgColor
+                }
+            });
+            // dispatch the event
+            elem.dispatchEvent(event);
+        }
+
+        // Select the div element
+        let div = document.querySelector('.note');
+
+        // Add border style
+        function addBorder(elem) {
+            elem.style.border = "solid 1px red";
+        }
+
+        // Listen to the highlight event
+        div.addEventListener('highlight', function (e) {
+            addBorder(this);
+
+            // examine the background
+            console.log(e.detail);
+        });
+
+        // highlight div element
+        highlight(div);
+    </script>
+</body>
+</html>
+```
+
+# 8 Debounce
+*là phương pháp lập trình được sử dụng để giới hạn tốc độ/số lần gọi của 1 chức năng trong 1 khoảng thời gian được cài đặt.*
+```
+const debounce = (fn, delay=500) => {
+    let timeoutId;
+
+    return (...args) => {
+        // cancel the previous timer
+        if (timeoutId) {
+            clearTimeout(timeoutId);
+        }
+        // Nếu tồn đang trong thời gian delay thì sẽ clear hàm setTimeOut()
+        timeoutId = setTimeout(() => {
+            fn.apply(null, args);///đây là chỗ callback function này
+        }, delay);
+    };
+};
+```

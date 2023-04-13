@@ -366,23 +366,16 @@
 
 // dec2Bin(10);
 // =========================================================================
-let btn = document.querySelector('#button')
-let header = document.querySelector('header')
-// document.body.addEventListener('click',function(event) {
-//     console.log('The body was clicked!');
-//     // event.stopPropagation();
 
-// });
-header.addEventListener('click',(event)=>{
-    console.log('The header was clicked!')
-    console.log(event.eventPhase)
-    event.stopPropagation()
-},false)
-btn.addEventListener('click', function(event) {
-    console.log('The button was clicked!');
-    console.log(event.bubbles)
-    event.preventDefault()
-    // event.stopPropagation()
-});
+const showBox = document.querySelector('.password-box i')
+const passwordBox = document.querySelector('.password-box')
+const inputPassWord = document.querySelector('#password')
+
+showBox.addEventListener('click',()=>{
+    passwordBox.classList.toggle('hidden');
+    let type = inputPassWord.getAttribute("type") === "password"? 'text': "password";
+    inputPassWord.setAttribute('type',type)
+    // passwordBox.setAttribute('type',type)
+})  
 
 
