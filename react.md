@@ -146,8 +146,40 @@ JSX không phải là một chuỗi kí tự cũng không phải là là HTML, n
 ```
 2. Đóng tất cả các thẻ
 3. camelCase tất cả mọi thứ
-**Children Props**
+## Children Props
++ Có 2 cách để truyền giá trị cho 1 props là: sử dụng string literals hoặc sử dụng expression
++ Props mặc định là true
++ Children props: là tất cả những gì inside 1 component
+
+```
+function FancyBorder(props) {
+  return (
+    <div className={'FancyBorder FancyBorder-' + props.color}>
+      {props.children}
+    </div>
+  );
+}
+function WelcomeDialog() {
+  return (
+    <FancyBorder color="blue">
+      <h1 className="Dialog-title">
+        Welcome
+      </h1>
+      <p className="Dialog-message">
+        Thank you for visiting our spacecraft!
+      </p>
+    </FancyBorder>
+  );
+}
+```
+## Props: 
+là object thể hiện các tham số hay đối số truyền vào component 
 # Phân biệt NPM NPX và YARN
+
+```
+
+
+```
 **1. NPM**
 - Project scope
     + npm install <tên thư viện> => cài vào dependencies
@@ -252,16 +284,40 @@ function App() {
 
 
 ## 2. useEfect()
-  *Callback luôn được gọi sau khi component mounted*
++ Callback luôn được gọi sau khi component mounted
++ callback luôn được gọi sau cùng khi render component.
+```
+ const [state, setState] = useState('')
+
+  useEffect(()=>{
+    console.log('This is callback')
+  })
+
+  console.log('Mounted')
+
+  return (
+    <div>
+      <input
+        value = {state}
+        onChange={(e)=>setState(e.target.value)}
+      />
+      
+    </div>
+  )
+
+
+////Log: 
+Mounted
+This is callback
+```
+  
   
 ### 2.1 useEffect(callback)
-- Gọi callback sau mỗi lần re-render
 - Callback được gọi sau mỗi lần component được re-render
 - Phần return để render UI sẽ được ưu tiên thực thi trước phần callback của useEffect
   Như trong ví dụ sau thì 'Render' sẽ được log ra trước 'Mounted'
 
 ```
-
 function Content(){
   const [state, setState] = useState('')
 
@@ -300,7 +356,6 @@ function Content(){
       .then(res=>res.json())
       .then(posts => setPosts(posts))
   },[type])
-  console.log('Re-render')
 
   return (
     <div>
@@ -527,5 +582,692 @@ function App(){
 ```
 
 Trong đoạn code trên, sau mỗi lần thay đổi ảnh thì component được render lại do useState, nhưng trong useEffect thì chính Cleanup đã xóa dữ liệu của URL.createObjectURL
+## 3. useLayoutEffect()
+  Hoạt động và tính năng tương tự như useEffect nhưng được cải thiện trong một số trường hợp về giao diện người dùng.
+### 3.1 Cách thức hoạt động của useLayoutEffect()
+1. Cập nhật lại state
+2. Cập nhật lại DOM (mutated)
+3. Gọi cleanup nếu dependencies thay đổi(sync)
+4. Gọi callback trong useLayoutEffect
+5. Render lại UI
+
+### 3.2 Cách thức hoạt động của useEffect()
+1. Cập nhật lại state
+2. Cập nhật lại DOM (mutated)
+3. Render lại UI
+4. Gọi cleanup nếu dependencies thay đổi 
+5. Gọi callback trong useEffect
+
+```
+function App(){
+    const [count, setCount] = useState(1)
+    function handleRun(){
+        setCount(count + 1)
+    }
+
+    useEffect(()=>{
+        if(count>3){
+            setCount(0);
+        }
+    },[count])
+
+    return(
+        <div>
+            <p>{count}</p>
+            <button
+                onClick ={handleRun}
+            >
+                Run
+            </button>
+        </div>
+    )
+}
+```
+
+
+## 4. useRef()
+dùng để lưu giá trị bất kì qua một tham chiếu bên ngoài Component
+```
+function App(){
+    const [count, setCount] = useState(60)
+
+    let timerId;
+
+    const handleStart =()=>{
+        timerId = setInterval(()=>{
+            setCount(preCount=>preCount-1)
+        },1000)
+
+        console.log('Start->',timerId)
+    }
+
+    const handleStop = ()=>{
+        clearInterval(timerId)
+        console.log('Stop->',timerId)
+
+    }
+
+    return(
+        <div>
+            <p>{count}</p>
+            <button onClick={handleStart}>Start</button>
+            <button onClick={handleStop}>Stop</button>
+        </div>
+    )
+}
+
+
+userRef(initialValue)
++ nhận đối số là giá trị khởi tạo
++ trả về một object có property current là giá trị khởi tạo được truyền vào
+
+```
+Vì mỗi hàm đều có phạm vi khác nhau trong mỗi lần gọi khác nhau, nên trong ví dụ này kể từ 1000ms đầu tiên trở đi khi ta ấn stop thì không thể clearInterval(timerId) đúng với timerId nữa. Do đó không thể dừng việc đếm ngược này được.
+
+Và useRef() sinh ra để giải quyết vấn đề này.
+
+```
+function App(){
+    const [count, setCount] = useState(60)
+
+    const ref = useRef('Hello')
+
+    console.log(ref)
+
+    const handleStart =()=>{
+       ref.current = setInterval(()=>{
+        setCount(preCount=>preCount -1)
+       },1000)
+    }
+
+    const handleStop = ()=>{
+        clearInterval(ref.current)
+        console.log('Stop->',ref.current)
+
+    }
+
+    return(
+        <div>
+            <p>{count}</p>
+            <button onClick={handleStart}>Start</button>
+            <button onClick={handleStop}>Stop</button>
+        </div>
+    )
+}
+
+```
+Trong đoạn code trên, biến ref được trả về bởi useRef có thể truy cập từ tại mọi thời điểm, kể cả khi component được render lại.
+
+## React.memo HOC - Higher Order Component
+  để tránh render lại component trong những tình huống không cần thiết. Cách hoạt động của memo là check các props của component có bị thay đổi trước mỗi lần render, nếu chỉ cần 1 props thay đổi thì sẽ được component sẽ được render.
+```
+function App(){
+    const [count, setCount] = useState(60)
+
+    const ref = useRef('Hello')
+    const preCount = useRef()
+    const refH1 = useRef()
+
+
+    useEffect(()=>{
+        const rect = refH1.current.getBoundingClientRect()
+        console.log(rect)
+    },[])
+
+    useEffect(()=>{
+        preCount.current = count;
+        // console.log('Render')
+    },[count])
+
+    const handleStart =()=>{
+       ref.current = setInterval(()=>{
+        setCount(preCount=>preCount -1)
+       },1000)
+    }
+
+    const handleStop = ()=>{
+        clearInterval(ref.current)
+
+    }
+
+    // console.log('Mounted');
+    // console.log(count, preCount.current)
+
+    return(
+        <div>
+            <Heading count={count} />
+            <h1 ref={refH1}>{count}</h1>
+            <button onClick={handleStart}>Start</button>
+            <button onClick={handleStop}>Stop</button>
+        </div>
+    )
+}
+
+
+import {memo} from 'react'
+
+function Heading({count}){
+    console.log('re-render');
+    return(
+        <div>
+            <h1>Hello anh em!!! {count}</h1>
+        </div>
+    )
+}
+
+export default memo(Heading)
+```
+
+
+## useCallback()
+  dùng để tránh tạo ra những hàm mới không cần thiết trong function component. 
+  Được sử dụng kết hợp với memo(). Trường hợp, không muốn re-render component con khi đã sử dụng memo, mà component còn có props là 1 dữ liệu kiểu reference trong component cha thì khi này memo sẽ không có tác dụng.
+Cần hiểu được 
+  + Reference types 
+  + React memo()
+**Vấn đề:**
+```
+function App(){
+    const [count, setCount] = useState(0);
+    
+    const handleIncrease = ()=>{
+        setCount(preCount => preCount + 1)
+    }
+    
+    return (
+        <div>
+            <Heading onIncrease = {handleIncrease} />
+            <h1>{count}</h1>
+        </div>
+    )
+}
+
+import {memo} from 'react'
+
+function Heading({onIncrease}){
+    console.log('re-render');
+    return(
+        <div>
+            <h1>Hello anh em!!!</h1>
+            <button onClick={onIncrease}>
+                Click me!
+            </button>
+        </div>
+    )
+}
+
+export default memo(Heading)
+```
+Trong khi chạy đoạn code trên, cứ mỗi lần re-render component App thì component Heading cũng được render lại cùng mặc dù đã sử dụng React.memo(). Lý do là do props của Heading nhận được là referece type, nên mỗi lần App component re-render thì hàm handleIncrease đều được khởi tạo lại, mà mỗi lần khởi tạo đều lưu vào những vùng nhớ khác nhau. Nên khi so sánh các props đều trả về giá trị false, mặc dù logic hàm là như nhau.
+
+Cách giải quyết vấn đề: 
+```
+function App(){
+    const [count, setCount] = useState(0);
+
+    const handleIncrease = useCallback(()=>{
+        setCount(preCount=>preCount + 1 )
+    },[])
+    
+    return (
+        <div>
+            <Heading onIncrease = {handleIncrease} />
+            <h1>{count}</h1>
+        </div>
+    )
+}
+
+```
+***Cách hoạt động của useCallback:***
+*Syntax: useCallack(callback,[])*
++ useCallback được gọi, nó tạo ra hàm callback được truyền vào, nhận tham chiếu và lưu ra ngoài phạm vi của component chưa nó. Và return lại tham chiếu đó cho biến được gán.
++ Khi re-render, nếu mảng chưa các dependencies trống thì nó sẽ trả các tham chiếu trước đó, thay vì trả về tham chiếu mới. Do đó, tham chiếu sẽ không bị thay đổi, nên khi có memo() so sánh sẽ không thấy sự thay đổi của component con nên component con sẽ không bị re-render.
++ Trong những trường hợp trong callback truyền vào sử dụng những biến ở ngoài phạm vị của callback, thì đưa nó vào mảng dependencies. Cách thức hoạt động như useEffect()
+
+## useMemo()
+```
+function App(){
+    const [name, setName] = useState('')
+    const [price, setPrice] = useState('')
+    const [products, setProduct] = useState([])
+
+    const total = products.reduce((result, product)=>{
+        console.log('Tinh toan lai...');
+        return result + product.price}
+        ,0)
+
+    const handleSubmit = ()=>{
+        setProduct([...products,{name: name,price: +price}])
+    }
+
+    return (
+        <div style={{padding: '10px 30px'}}>
+            <input
+                width= '100%'
+                value={name}
+                onChange={(e)=>setName(e.target.value)}
+                placeholder='Enter name...'
+            />
+
+            <input
+                width= '100%'
+                value={price}
+                onChange={(e)=>setPrice(e.target.value)}
+                placeholder='Enter price...'
+            />
+
+            <button onClick={handleSubmit}>Add</button>
+            <br/>
+            Total:{total}
+            <ul>
+                {
+                    products && products.map((product, index)=>{
+                        return(
+                            <li key={index}>{product.name}</li>
+                        )
+                    })
+                }
+            </ul>
+
+        </div>
+    )
+}
+
+```
+Trong đoạn code trên, mỗi lần re-render thì hàm reduce đều được gọi lại một cách không cần thiết. Như là trong trường hợp chỉ cần nhập vào input thì component cũng render lại nên hàm reduce cũng được thực thi mặc dù sản phẩm chưa được thêm vào
+
+***Cách giải quyết:***
+```
+=
+function App(){
+    const [name, setName] = useState('')
+    const [price, setPrice] = useState('')
+    const [products, setProduct] = useState([])
+
+    const total = useMemo(()=>{
+        const result = products.reduce((result,product)=>{
+            console.log('Tính toán lại...');
+            return result + product.price;
+        },0)
+    },[products])
+
+    const handleSubmit = ()=>{
+        setProduct([...products,{name: name,price: +price}])
+    }
+
+    return (
+        <div style={{padding: '10px 30px'}}>
+            <input
+                width= '100%'
+                value={name}
+                onChange={(e)=>setName(e.target.value)}
+                placeholder='Enter name...'
+            />
+
+            <input
+                width= '100%'
+                value={price}
+                onChange={(e)=>setPrice(e.target.value)}
+                placeholder='Enter price...'
+            />
+
+            <button onClick={handleSubmit}>Add</button>
+            <br/>
+            Total:{total}
+            <ul>
+                {
+                    products && products.map((product, index)=>{
+                        return(
+                            <li key={index}>{product.name}</li>
+                        )
+                    })
+                }
+            </ul>
+
+        </div>
+    )
+}
+```
+***Cách hoạt động tương tự như useEffect hay useCallback***
+*Syntax: useMemo(callback,[dependencise])*
++ thực hiện callback và trả về giá trị
++ chỉ khi mảng dependencies có sự thay đổi thì callback mới được thực hiện và trả về giá trị mới
+
+## useReducer
+tương tự như useState, useReducer được khuyên nên dùng trong những trường hợp component có nhiều state, state phụ thuộc nhau, state có cấu trúc phúc tạp như mảng nhiều cấp, object nhiều cấp,...
+
+**Cách thức hoạt động của useState**
+1. Init state
+2. Action:
+
+**Cách thức hoạt động của useReducer**
+1. Init state
+2. Action
+3. Reducer
+4. Dispatch
+```
+const initState = 0;
+function reducer(state, action){
+    console.log('Reducer running...');
+    switch(action){
+        case 'up':
+            return state + 1;
+        case 'down': 
+            return state -1;
+        case 'reset':
+            return 0;
+        default:
+            return state;
+    }
+}
+
+function App(){
+    const [count, dispatch] = useReducer(reducer, initState)
+
+
+    return (
+        <>
+            <h1>{count}</h1>
+            <button onClick={()=>dispatch('up')}>Up</button>
+            <button onClick={()=>dispatch('down')}>Down</button>
+            <button onClick={()=>dispatch('reset')}>Reset</button>
+        </>
+    )
+}
+
+```
+**Cách hoạt động của đoạn code trên(Trong trường hợp ấn Up button):**
++ đầu tiên component được render lần đầu, count sẽ được gán bằng giá trị initState(chỉ gán cho lần đầu Mounted)
++ khi ấn Up button, dispatch sẽ hoạt động và đẩy đi bản tin 'up', khi đó reducer function được kích hoạt bởi action. Action được gắn bằng giá trị dispatch đã gửi đi. Xử lý logic trong reducer function và trả về giá trị cho state
++ Khi reducer thực thi xong, count sẽ được gán giá trị cho count
+***Chú ý: giá trị trả về state phải cùng kiểu với initState***
+  
+<img src="https://dmitripavlutin.com/bba1ab69aedaaeebc68ceafbb0d304c3/react-usereducer.svg" alt="MarineGEO circle logo" style="height: 500px; width:500px;"/>
+
+**useReducer với state phức tạp**
+*Ví dụ về sử dụng useReducer() trong xử lý API để loading danh sách user*
+
+```
+const initUser = {
+    loading: false,
+    data: [],
+    err: null
+}
+const usersReducer = (state, action)=>{
+    switch(action.type){
+        case 'GET_USER_REQUEST':
+            return {
+                ...state,
+                loading: true
+            }
+        case 'GET_USER_SUCCESS':
+            return {
+                ...state,
+                loading: false,
+                data: action.data
+            }
+
+        case 'GET_USER_ERROR':
+            return {
+                ...state,
+                data: [],
+                err: action.data
+            }
+    }
+}
+
+
+function App(){
+    const [users, usersDispatch] = useReducer(usersReducer, initUser)
+
+    const getUser = ()=>{
+        usersDispatch({
+            type: 'GET_USER_REQUEST'
+        })
+
+        setTimeout(()=>{
+            fetch('https://jsonplaceholder.typicode.com/users')
+            .then(res=>res.json())
+            .then(res=>{
+                usersDispatch({
+                    type: 'GET_USER_SUCCESS',
+                    data: res
+                })
+            })
+            .catch(err=>{
+                usersDispatch({
+                    type: 'GET_USER_ERROR',
+                    data: err
+                })
+            })
+        },2000)
+    }
+
+    return(
+        <>
+        <button onClick = {getUser}>GET USERS</button>
+        <ul style={{listStyleType: 'none'}}>
+            {
+                users.loading ==true ? <p>Loading...</p>:<>{
+
+                    users.data.map(user=>{
+                        return(
+                            <li>{user.id}. {user.name}</li>
+                        )
+                    })
+                }</>
+                
+            }
+        </ul>
+        </>
+    )
+}
+```
+
+## useContext()
+là cách để tạo ra state ở phạm vi global. Được sử dụng kết hợp với useReducer hay useState
+**Các bước thực hiện với useContext()**
+1. Create Context
+2. Provider
+3. Consumer
+## ref in React
+Trong React là 1 thuộc tính của 1 tag hay một element và đại diện cho chính nó. Cho phép ta có thể truy cập đến DOM Node hay ReactElement khi đã được mounted. Nó tương tự như trong JS, dùng getElementById()
+## useForwardRef()
+Ví dụ trong trường hợp này:
+Ta không thể truyền props ref cho component Video được, vì trong React thì ref không phải là 1 attribute. Do vậy khi log props của Video ra ta chỉ nhận được object chứa title
+```
+// Video Component
+function Video(props){
+    return(
+        <>
+            <video
+                src= {video1}
+                width= {300}
+            />
+            {
+                console.log(props)
+            }
+        </>
+    )
+}
+
+export default Video
+import Video from './Video'
+// APP Component
+function App(){
+    const videoRef = useRef()
+    useEffect(()=>{
+        console.log(videoRef)
+    })
+    return(
+        <>
+            <Video title= 'Video' ref = {videoRef}/>
+            <button >Play</button>
+            <button >Pause</button>
+        </>
+    )
+}
+export default App;
+```
+***Giải pháp ở đây là sử dụng forwardRef:***
+
+```
+/// APP component
+import Video from './Video'
+
+function App(){
+    const videoRef = useRef()
+    useEffect(()=>{
+        console.log(videoRef)
+    })
+    return(
+        <>
+            <Video title= 'Video' ref = {videoRef}/>
+            <button >Play</button>
+            <button >Pause</button>
+        </>
+    )
+}
+
+export default App;
+/// Video Component
+function Video(props,ref){
+    return(
+        <>
+            <video
+                ref={ref}
+                src= {video1}
+                width= {300}
+            />
+            {
+                console.log(props,ref)
+            }
+        </>
+    )
+}
+
+export default forwardRef(Video)
+
+
+```
+forwardRef là 1 function, nhận tham số thứ nhất là 1 callback. Khi dùng ta export default forwardRef(Video) thì Video cũng chính là 1 function với 2 tham số (props, ref)
+
+
+Cách hoạt động của ref và forwardRef trong đoạn code trên như sau:
++ khai báo biến ref và gán giá trị bằng useRef() trong component App như là JSX attribute
++ ta dùng ref trong component Video để chỉ định nó(Trong file App.js)
++ khi export, ta dùng hàm forwardRef(Video). Khi này ref sẽ được chuyển tiếp xuống và có thể sử dụng như JSX attribute
++ dùng ref trong phần định nghĩa component Video là tham số thứ 2 
++ Khi ref được đính kèm, ref.current sẽ được chỉ định đến thẻ video trong DOM node.
+```
+//File: App.js
+function App(){
+    const videoRef = useRef()
+    return(
+        <>
+            <Video ref = {videoRef}/>
+            <button>Play</button>
+            <button>Pause</button>
+        </>
+    )
+}
+
+==============
+///File Video.js
+import {forwardRef, useRef} from 'react';
+import video1 from './video-1.mp4'
+
+
+function Video(props, ref){
+    const videoRef = useRef()
+    return(
+        <video
+            ref={ref}
+            src= {video1}
+            width= {300}
+        />
+    )
+}
+
+export default forwardRef(Video)
+
+Cách hoạt động của đoạn code trên: 
++ Khi component Video nhận props là videoRef
+thì forwardRef(Video) sẽ nhận props ấy và trả về cho đối số thứ 2 trong Video component
++ Đối số ấy sẽ được Video component sử dụng 
+
+```
+***Nhưng vấn đề tiếp tục ở đây là khi sử dụng forwardRef và ref, thì ta có thể dùng ref để truy cập và xử lý mọi thứ. Do đó cần tùy chỉnh những thứ mà Component cha có thể dùng từ ref của Component con.***\
+```
+useImperativeHandle(ref, createHandle, dependencies?)
+
+```
+Trong đó:
++ ref nhận được từ tham số thứ 2 của forwardRef
++ creatHandle: là hàm không đối số, trả về ***object*** các phương thức mà bạn muốn cho phép hiển thị
++ trả về undefined
+
+
+```
+import Video from './Video'
+
+function App(){
+    const videoRef = useRef()
+    useEffect(()=>{
+        console.log(videoRef)
+    })
+    function handlePlay(){
+        videoRef.current.play();
+    }
+    function handleStop(){
+        videoRef.current.pause();
+    }
+    return(
+        <>
+            <Video title= 'Video' ref = {videoRef}/>
+            <button onClick={handlePlay} >Play</button>
+            <button onClick={handleStop} >Pause</button>
+        </>
+    )
+}
+
+export default App;
+////////
+import {forwardRef, useRef, useImperativeHandle} from 'react';
+import video1 from './video-1.mp4'
+
+
+function Video(props,ref){
+    const videoRef = useRef()
+    useImperativeHandle(ref,()=>{
+        return{
+            play(){
+                videoRef.current.play()
+            }
+        }
+    })
+    return(
+        <>
+            <video
+                ref={videoRef}
+                src= {video1}
+                width= {300}
+            />
+            {
+                console.log(props,ref)
+            }
+        </>
+    )
+}
+
+export default forwardRef(Video)
+```
+Ví dụ trong đoạn code trên, ta chỉ cho phép Component cho dùng được method play() với ref Video, nên khi nhấn button Stop thì sẽ gây lỗi cho chương trình
+
+# CSS Module - SCSS
+
+# Router - bộ định tuyến
 ```
 ```
+
+
