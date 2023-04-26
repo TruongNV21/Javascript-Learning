@@ -2,7 +2,7 @@
 ## 1. Enhanced object literals
 là cách viết ngắn gọn trong ES6 trong các trường hợp sau: 
 **1. Định nghĩa key và value cho object**
-```
+```javascript
 let a =1, b=2, c=3;
 let obj = {
     a,
@@ -18,7 +18,7 @@ c: 3
 \\
 ```
 **2. Định nghĩa method cho object**
-```
+```javascript
 let obj = {
     sum(a,b){
         return a+b;
@@ -27,7 +27,7 @@ let obj = {
 
 ```
 **3. Định nghĩa key cho object dưới dạng biến.**
-```
+```javascript
 let a= 'name';
 let obj = {
     [a]: 'Truong'
@@ -39,7 +39,7 @@ console.log(obj)
 
 ## 2. Destructuring
 là một cú pháp cho phép bạn gán các thuộc tính của một Object hay một Array. Có hai loại Destructuring là Destructuring Object và Destructuring Array.
-```
+```javascript
 var a, b;
 [a, b] = [1, 2]
 console.log(a, b); //1 2
@@ -60,7 +60,7 @@ console.log(a, b, c) ; //1, 2, [3, 4, 5]
 ```
 
 **Destructuring với Object**
-```
+```javascript
 const {a, b} = {a: 1, b: 2};
 console.log(a, b);// 1, 2
 
@@ -75,31 +75,31 @@ const {a, b, ...c} = {a: 1, b: 2, c: () => 3, d: 4}
 console.log(a, b, c)// 1, 2, {d: 4, c: f} với f = () => 3
 ```
 ***Để dùng đúng cú pháp thì tên biến được gán giá trị phải cùng với tên key của object***
-```
+```javascript
 const {e, b, c} = {a: 1, b: 2, c: () => 3}
 console.log(e, b, c)// undefined , 2, () => 3
 ```
 ***Ta cũng có thể gán giá trị mặc định cho biến trong trường hợp tên biến không trùng với bất kì key nào trong object. Nếu trong tên biến trùng với tên key trong object thì giá trị của biến sẽ được gán bằng giá trị của key tương ứng, nếu không thì được gán cho giá trị mặc định và không bị xảy ra lỗi cú pháp.***
-```
+```javascript
 const {a = 12, b, c} = { b: 2, c: () => 3}
 console.log(a, b, c)// 12 , 2, () => 3
 ```
 ***Ngoài ra, ta cũng có thể thay đổi tên biến sao cho không trùng với key của object nữa***
-```
+```javascript
 const {a:d, b, c} = {a: 1, b: 2, c: () => 3}
 console.log(d, b, c)// 12 , 2, () => 3
 ```
 **Một số ứng dụng của Destructuring**
 ***1. Gán giá trị cho biến***
     Ví dụ trong trường hợp Rest API trả về một array hoặc object thì khi sử dụng destructuring lúc này thì hiệu quả: 
-```
+```javascript
     const res = [1, 2, 3, 4,] ;//res.response();
     const [a, b, c] = res
     console.log(a, b, c);//1 2 3
 ```
 
 ***2. Swapping***
-```
+```javascript
 var a = 1;
 var b = 2;
 [a, b] = [b, a]
@@ -107,14 +107,14 @@ console.log(a, b) ;//2, 1
 ```
 ***3. Bỏ qua giá trị***
 
-```
+```javascript
 const res = () => [1, 2, 3]
 const [a, ,b] = res()
 console.log(a, b) ;//1,3
 ```
 ***4. Gán giá trị cho các biến mới***
 
-```
+```javascript
 const res = {blog: 'anonystick.com', type: 'javascript'}
 const {blog: nameBlog, type: newType} = res;
 console.log(nameBlog, newType);//anonystick.com, javascript
@@ -128,9 +128,13 @@ Khác nhau:
 + Spread: phân rã các giá trị trong mảng hoặc chuỗi hay thậm chí cả object thành các phần tử riêng lẻ.
 # JSX - Javascript XML
 JSX không phải là một chuỗi kí tự cũng không phải là là HTML, nó là một cú pháp mở rộng cho JS để mô tả giao diện người dùng UI. Nó đi kèm với toàn bộ tính năng của JS và tạo ra những ReactElement 
+
++ là tiêu chuẩn cho JS XML
++ cho phép viết HTML trong React và thêm chúng vào DOM mà không cần dùng đến createELement() và appendChild()
+
 **Một số quy tắc của JSX:**
 1. Trả về duy nhất 1 phần từ nguyên gốc
-```
+```javascript
 <>
   <h1>Hedy Lamarr's Todos</h1>
   <img 
@@ -144,14 +148,14 @@ JSX không phải là một chuỗi kí tự cũng không phải là là HTML, n
 </>
 ///Nếu muốn không trả về phần tử bao rỗng thì dùng React.Fragment - tương tự như document.fragment
 ```
-2. Đóng tất cả các thẻ
-3. camelCase tất cả mọi thứ
+1. Đóng tất cả các thẻ
+2. camelCase tất cả mọi thứ
 ## Children Props
 + Có 2 cách để truyền giá trị cho 1 props là: sử dụng string literals hoặc sử dụng expression
 + Props mặc định là true
 + Children props: là tất cả những gì inside 1 component
 
-```
+```javascript
 function FancyBorder(props) {
   return (
     <div className={'FancyBorder FancyBorder-' + props.color}>
@@ -208,7 +212,7 @@ là object thể hiện các tham số hay đối số truyền vào component
 ## 1. useState()
   Dùng useState khi muốn dữ liệu thay đổi thì giao diện tự động được cập nhật
 **1. Cách dùng**
-```
+```javascript
   import {useState} from 'react'
 
   const [state, setState] = useState(initState)
@@ -700,7 +704,7 @@ Trong đoạn code trên, biến ref được trả về bởi useRef có thể 
 
 ## React.memo HOC - Higher Order Component
   để tránh render lại component trong những tình huống không cần thiết. Cách hoạt động của memo là check các props của component có bị thay đổi trước mỗi lần render, nếu chỉ cần 1 props thay đổi thì sẽ được component sẽ được render.
-```
+```javascript
 function App(){
     const [count, setCount] = useState(60)
 
@@ -766,7 +770,7 @@ Cần hiểu được
   + Reference types 
   + React memo()
 **Vấn đề:**
-```
+```javascript
 function App(){
     const [count, setCount] = useState(0);
     
@@ -801,7 +805,7 @@ export default memo(Heading)
 Trong khi chạy đoạn code trên, cứ mỗi lần re-render component App thì component Heading cũng được render lại cùng mặc dù đã sử dụng React.memo(). Lý do là do props của Heading nhận được là referece type, nên mỗi lần App component re-render thì hàm handleIncrease đều được khởi tạo lại, mà mỗi lần khởi tạo đều lưu vào những vùng nhớ khác nhau. Nên khi so sánh các props đều trả về giá trị false, mặc dù logic hàm là như nhau.
 
 Cách giải quyết vấn đề: 
-```
+```javascript
 function App(){
     const [count, setCount] = useState(0);
 
@@ -825,7 +829,7 @@ function App(){
 + Trong những trường hợp trong callback truyền vào sử dụng những biến ở ngoài phạm vị của callback, thì đưa nó vào mảng dependencies. Cách thức hoạt động như useEffect()
 
 ## useMemo()
-```
+```javascript
 function App(){
     const [name, setName] = useState('')
     const [price, setPrice] = useState('')
@@ -877,8 +881,7 @@ function App(){
 Trong đoạn code trên, mỗi lần re-render thì hàm reduce đều được gọi lại một cách không cần thiết. Như là trong trường hợp chỉ cần nhập vào input thì component cũng render lại nên hàm reduce cũng được thực thi mặc dù sản phẩm chưa được thêm vào
 
 ***Cách giải quyết:***
-```
-=
+```javascript
 function App(){
     const [name, setName] = useState('')
     const [price, setPrice] = useState('')
@@ -945,7 +948,7 @@ tương tự như useState, useReducer được khuyên nên dùng trong những
 2. Action
 3. Reducer
 4. Dispatch
-```
+```javascript
 const initState = 0;
 function reducer(state, action){
     console.log('Reducer running...');
@@ -987,7 +990,7 @@ function App(){
 **useReducer với state phức tạp**
 *Ví dụ về sử dụng useReducer() trong xử lý API để loading danh sách user*
 
-```
+```javascript
 const initUser = {
     loading: false,
     data: [],
@@ -1075,7 +1078,7 @@ Trong React là 1 thuộc tính của 1 tag hay một element và đại diện 
 ## useForwardRef()
 Ví dụ trong trường hợp này:
 Ta không thể truyền props ref cho component Video được, vì trong React thì ref không phải là 1 attribute. Do vậy khi log props của Video ra ta chỉ nhận được object chứa title
-```
+```javascript
 // Video Component
 function Video(props){
     return(
@@ -1111,7 +1114,7 @@ export default App;
 ```
 ***Giải pháp ở đây là sử dụng forwardRef:***
 
-```
+```javascript
 /// APP component
 import Video from './Video'
 
@@ -1159,7 +1162,7 @@ Cách hoạt động của ref và forwardRef trong đoạn code trên như sau:
 + khi export, ta dùng hàm forwardRef(Video). Khi này ref sẽ được chuyển tiếp xuống và có thể sử dụng như JSX attribute
 + dùng ref trong phần định nghĩa component Video là tham số thứ 2 
 + Khi ref được đính kèm, ref.current sẽ được chỉ định đến thẻ video trong DOM node.
-```
+```javascript
 //File: App.js
 function App(){
     const videoRef = useRef()
@@ -1208,7 +1211,7 @@ Trong đó:
 + trả về undefined
 
 
-```
+```javascript
 import Video from './Video'
 
 function App(){
