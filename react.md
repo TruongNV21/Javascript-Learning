@@ -325,7 +325,7 @@ This is callback
 - Phần return để render UI sẽ được ưu tiên thực thi trước phần callback của useEffect
   Như trong ví dụ sau thì 'Render' sẽ được log ra trước 'Mounted'
 
-```
+```javascript
 function Content(){
   const [state, setState] = useState('')
 
@@ -349,7 +349,7 @@ function Content(){
 ### 2.3 useEffect(callback,dependencies)
 + Callback được gọi lại sau mỗi lần dependencies thay đổi.
 + Trong đó, dependencies được hiểu như là một biến, có thể gán bằng giá trị của biến khác trong component và cả ngoài component.
-```
+```javascript
 const tabs = ['posts','users','albums']
 
 
@@ -409,7 +409,7 @@ function Content(){
 ```
 
 #### useEffect() with DOM event
-```
+```javascript
 const tabs = ['posts','users','albums']
 
 
@@ -497,7 +497,7 @@ function Content(){
 
 Trong trường hợp này xảy ra tình trạng leak memory do khi component đã được unmounted nhưng đối tương Window thì vẫn lắng nghe sự kiện scroll.
 Để khắc phục tình trạng này, cần dùng Cleanup để xử lý tại thời điểm unmounted.
-```
+```javascript
   useEffect(()=>{
     const handleScroll = ()=>{
       setShowGoToTop(window.scrollY>=200)
@@ -511,7 +511,7 @@ Trong trường hợp này xảy ra tình trạng leak memory do khi component �
 ### useEffect() with Timer Function: setInterval, setTimeOut,...
 
 Tương tự như khi dùng useEffect với DOM Event thì khi dùng với Timer Function cũng gây ra tình trạng leak memory, cách xử lý cũng tương tự là sẽ clearTimer trước khi unmounted
-```
+```javascript
 function App(){
   const [countdown, setCountdown] = useState(180);
 
@@ -540,7 +540,7 @@ function App(){
 + luôn được gọi trước khi component unmounted
 + luôn được gọi trước khi callback được gọi( trừ lần mounted). Đây chính là lý do để hàm cleanup thực hiện được chức năng của mình
   
-```
+```javascript
 function App(){
   const [avatar, setAvatar] = useState();
 
@@ -606,7 +606,7 @@ Trong đoạn code trên, sau mỗi lần thay đổi ảnh thì component đư�
 4. Gọi cleanup nếu dependencies thay đổi 
 5. Gọi callback trong useEffect
 
-```
+```javascript
 function App(){
     const [count, setCount] = useState(1)
     function handleRun(){
@@ -635,7 +635,7 @@ function App(){
 
 ## 4. useRef()
 dùng để lưu giá trị bất kì qua một tham chiếu bên ngoài Component
-```
+```javascript
 function App(){
     const [count, setCount] = useState(60)
 
@@ -674,7 +674,7 @@ Vì mỗi hàm đều có phạm vi khác nhau trong mỗi lần gọi khác nha
 
 Và useRef() sinh ra để giải quyết vấn đề này.
 
-```
+```javascript
 function App(){
     const [count, setCount] = useState(60)
 
