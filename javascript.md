@@ -1329,7 +1329,7 @@ cancelable: true/false
 
 # 8 Debounce
 *là phương pháp lập trình được sử dụng để giới hạn tốc độ/số lần gọi của 1 chức năng trong 1 khoảng thời gian được cài đặt.*
-```
+```javascript
 const debounce = (fn, delay=500) => {
     let timeoutId;
 

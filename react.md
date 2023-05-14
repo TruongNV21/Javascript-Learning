@@ -73,6 +73,10 @@ console.log(a, b, c)// 1, 2, () => 3
 
 const {a, b, ...c} = {a: 1, b: 2, c: () => 3, d: 4}
 console.log(a, b, c)// 1, 2, {d: 4, c: f} với f = () => 3
+//Nếu object gán có thuộc tính đã có giá trị thì biến sẽ được gán bằng giá trị đó
+const {a:d, b=2,c=12} ={a:true, b:3, c:12}
+console.log(d,b,c);
+//Log: true 3 12
 ```
 ***Để dùng đúng cú pháp thì tên biến được gán giá trị phải cùng với tên key của object***
 ```javascript
@@ -1270,7 +1274,48 @@ Ví dụ trong đoạn code trên, ta chỉ cho phép Component cho dùng đư�
 # CSS Module - SCSS
 
 # Router - bộ định tuyến
+# Redux
+<img src="https://d33wubrfki0l68.cloudfront.net/01cc198232551a7e180f4e9e327b5ab22d9d14e7/b33f4/assets/images/reduxdataflowdiagram-49fa8c3968371d9ef6f2a1486bd40a26.gif" alt="MarineGEO circle logo" style="height: 500px; width:500px;"/>
+
+## 1. Reducer
+***là 1 func nhận 2 tham số, được sử dụng để cập nhật lại state trong store***
+```javascript
+   const reducer = (state = initValue, action) =>{
+    switch(action.type){
+      case "INCREMENT":
+        return{
+          ...state,
+          value: state.value + 1
+        }
+
+        default: return state;
+    }
+   }
+
 ```
+***Các quy tắc trong Reducer***
+- Không được thay đổi trực tiếp state, chỉ nên tính toán dựa trên state và aciton nhận được
+- Không được sử dụng các đoạn code bất đồng bộ hay tính toán ngẫu nhiên(Math.random()) nào trong reducer
+  
+***Logic trong hàm Reudcer:***
+  
+   - Kiểm tra xem trong có cần thực hiện theo action không, nếu có thì copy lại state và thực hiện thay đổi
+   - Nếu không thì trả về state đã được truyền vào không thay đổi.
+
+##2. Action
+là 1 object có 2 trường là type để mô tả hành động và payload để chứa những dữ liệu bổ sung
+
+Format của type nên sử dụng theo định dạng như là "todos/todoAdd
+```javascript
+const addTodoAction = {
+  type: 'todos/todoAdded',
+  payload: 'Buy milk'
+}
+```
+## 3. Dispatch
+là 1 fucntion được sử dụng để kích hoạt việc cập nhật lại state trong store.
+
 ```
 
+```
 

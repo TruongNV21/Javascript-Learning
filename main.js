@@ -367,15 +367,36 @@
 // dec2Bin(10);
 // =========================================================================
 
-const showBox = document.querySelector('.password-box i')
-const passwordBox = document.querySelector('.password-box')
-const inputPassWord = document.querySelector('#password')
+// const showBox = document.querySelector('.password-box i')
+// const passwordBox = document.querySelector('.password-box')
+// const inputPassWord = document.querySelector('#password')
 
-showBox.addEventListener('click',()=>{
-    passwordBox.classList.toggle('hidden');
-    let type = inputPassWord.getAttribute("type") === "password"? 'text': "password";
-    inputPassWord.setAttribute('type',type)
-    // passwordBox.setAttribute('type',type)
-})  
+// showBox.addEventListener('click',()=>{
+//     passwordBox.classList.toggle('hidden');
+//     let type = inputPassWord.getAttribute("type") === "password"? 'text': "password";
+//     inputPassWord.setAttribute('type',type)
+//     // passwordBox.setAttribute('type',type)
+// })  
+// =========================================================================
+const nums1 = [1,2,3,3], nums2 = [1,1,2,2];
+var findDifference = (nums1, nums2)=> {
+    const len = Math.max(nums1.length, nums2.length)
+    let [ans1, ans2] = [new Set(), new Set()]
 
+    for(let i = 0; i < len; i++){
+        if(nums1[i] !== undefined){
+            if(!nums2.includes(nums1[i])){
+                ans1.add(nums1[i])
+            }
+        }
 
+        if(nums2[i] !== undefined){
+            if(!nums1.includes(nums2[i])){
+                ans2.add(nums2[i])
+            }
+        }
+    return [Array.from(ans1),Array.from(ans2)];
+}
+}
+
+console.log(findDifference(nums1, nums2))
